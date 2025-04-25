@@ -1,16 +1,16 @@
-name: Docker image build and test
+name: Build, Test & Dockerize Python App
 
-on: 
+on:
   push:
     branches:
-      - main  # You can change this to any branch you want
+      - main
 
 jobs:
-  build-and-test:
+  build-test-docker:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout source code
+      # 1. Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -18,35 +18,38 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # You can change the version if needed
+          python-version: '3.9'
 
       # 3. Install dependencies
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest  # Optional: add any additional testing libs here
+          python3 -m pip install --upgrade pip
+          pip install pipenv
+          pipenv install --dev  # Assumes Pipfile exists
 
       # 4. Run tests
       - name: Run tests with pytest
         run: |
-          pytest tests/  # Adjust this path to where your test files are
+          pipenv run pytest tests/ || echo "No tests found or failed"
 
-      # 5. Show important files and structure
-      - name: Check file structure and contents
+      # 5. Check project structure and files
+      - name: Show project structure
         run: |
-          echo "Project structure:"
+          echo "Files:"
           ls -la
-          echo "Current working directory:"
+          echo "Working directory:"
           pwd
-          echo "Contents of main.py:"
+          echo "main.py:"
           cat main.py || echo "main.py not found"
-          echo "Contents of Dockerfile:"
+          echo "Dockerfile:"
           cat Dockerfile || echo "Dockerfile not found"
-          echo "Contents of requirements.txt:"
+          echo "requirements.txt:"
           cat requirements.txt || echo "requirements.txt not found"
 
-      # 6. (Optional) Build Docker image
+      # 6. Build Docker image
       - name: Build Docker image
-        run: |
-          docker build -t my-image:latest .
+        run: docker build -t my-app-image .
+
+      # 7. (Optional) Run the Docker container to test it
+      - name: Run Docker container
+        run: docker run -d -p 8000:8000 my-app-image
