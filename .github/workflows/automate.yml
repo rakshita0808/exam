@@ -1,34 +1,52 @@
-name: Docker image build
+name: Docker image build and test
 
-on: push
+on: 
+  push:
+    branches:
+      - main  # You can change this to any branch you want
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout source code
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # or your preferred version
+          python-version: '3.9'  # You can change the version if needed
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest  # or any other test tools
+          pip install pytest  # Optional: add any additional testing libs here
 
-      - name: Run Tests
+      # 4. Run tests
+      - name: Run tests with pytest
         run: |
-          pytest tests/  # or the appropriate path to your tests
+          pytest tests/  # Adjust this path to where your test files are
 
-      - name: Testing Files and Structure
+      # 5. Show important files and structure
+      - name: Check file structure and contents
         run: |
-          ls
+          echo "Project structure:"
+          ls -la
+          echo "Current working directory:"
           pwd
-          cat main.py
-          cat Dockerfile
-          cat requirements.txt
+          echo "Contents of main.py:"
+          cat main.py || echo "main.py not found"
+          echo "Contents of Dockerfile:"
+          cat Dockerfile || echo "Dockerfile not found"
+          echo "Contents of requirements.txt:"
+          cat requirements.txt || echo "requirements.txt not found"
+
+      # 6. (Optional) Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t my-image:latest .
