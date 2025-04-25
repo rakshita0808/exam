@@ -9,7 +9,7 @@ import uvicorn # type: ignore
 
 @app.get("/")
 def read_root():
-    return dict(name="Anuj Gupta", Location= "Dehradun")
+    return dict(name="Rakshita garg", Location= "Dehradun")
 
 @app.get("/{data}")
 def read_root(data):
