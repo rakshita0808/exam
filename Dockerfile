@@ -1,23 +1,16 @@
-FROM ubuntu:latest
+FROM ubuntu
+RUN apt update -y
 
-# Install system dependencies
-RUN apt update -y && \
-    apt install -y python3 python3-pip pipenv && \
-    apt clean
+RUN apt install python3 python3-pip pipenv -y
 
-# Set working directory
 WORKDIR /app
 
-# Copy your project files into the image
 COPY . /app/
 
-# Install Python dependencies using Pipenv
-RUN pipenv install --system --deploy
+RUN pipenv install -r requirements.txt
 
-# Expose the desired port (you had 800, CMD had 80)
-EXPOSE 8000
+EXPOSE 800
 
-# Run the application
-CMD ["pipenv", "run", "python3", "main.py"]
-# Or for FastAPI:
-# CMD ["pipenv", "run", "uvicorn", "mains:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# CMD  pipenv run uvicorn mains:app -host 0.0.0.0 --port 80
+CMD pipenv run python3 ./main.py
