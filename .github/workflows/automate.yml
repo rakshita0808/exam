@@ -1,0 +1,19 @@
+name: Docker image build
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Testing
+        run: |
+          ls
+          pwd
+          cat main.py
+          cat Dockerfile
+          cat requirements.txt
