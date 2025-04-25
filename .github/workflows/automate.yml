@@ -10,7 +10,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
 
-      - name: Testing
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # or your preferred version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest  # or any other test tools
+
+      - name: Run Tests
+        run: |
+          pytest tests/  # or the appropriate path to your tests
+
+      - name: Testing Files and Structure
         run: |
           ls
           pwd
